@@ -41,7 +41,7 @@ def now():
 #wizard.validateSystem()
 
 settings = {}
-with open(r"C:\Users\anders.lemme\Desktop\autologin\config.json") as json_data_file:
+with open(r".\config.json") as json_data_file:
     settings = json.load(json_data_file)
 
 #if (('wizardRan' not in settings) or not (settings['wizardRan']) or (runWizardFlag)):
@@ -53,11 +53,20 @@ rootURL = settings['url']
 
 def StartWebDriver(settings):
     #Selenium driver setup
-    executablePath = (r"C:\Users\anders.lemme\Desktop\autologin\chromedriver" if (settings['browser'] == 'chrome') else r"C:\Users\anders.lemme\Desktop\autologin\geckodriver") + (".exe" if platform.system() == 'Windows' else "")
-    options = (webdriver.ChromeOptions() if (settings['browser'] == 'chrome') else webdriver.FirefoxOptions())
+    if (settings['browser'] == 'chrome'):
+        executablePath = (r".\chromedriver") + (".exe" if platform.system() == 'Windows' else "")
+    else:
+        executablePath = (r".\geckodriver") + (".exe" if platform.system() == 'Windows' else "")
+    
+    if (settings['browser'] == 'chrome'):
+        options = (webdriver.ChromeOptions())
+    else:
+        options = webdriver.FirefoxOptions()
+        
     options.add_argument("--start-maximized" if (platform.system() == "Windows") else "--kiosk")
+    
     global driver
-    driver = (webdriver.Chrome(executablePath, chrome_options=options) if (settings['browser'] == 'chrome') else webdriver.Firefox(executable_path=executablePath,firefox_options=options))
+    driver = (webdriver.Chrome( options=options) if (settings['browser'] == 'chrome') else webdriver.Firefox(options=options))
     if platform.system() == 'Windows':
         driver.fullscreen_window()
 
